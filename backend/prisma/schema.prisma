@@ -13,3 +13,74 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String
+  email     String   @unique
+  password  String
+  photo     String?
+  createdAt DateTime @default(now())  @map("created_at")
+  updatedAt DateTime @updatedAt  @map("updated_at")
+  categories Category[]
+  
+  @@map("users")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  image     String?
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+
+  @@map("categories")
+}
+
+model Task {
+  id            Int       @id @default(autoincrement())
+  title         String
+  description   String?   @db.Text
+  startDatetime DateTime? @map("start_datetime")
+  endDatetime   DateTime? @map("end_datetime")
+  priority      PriorityEnum  @default(NONE)
+  status        StatusEnum    @default(TODO)
+  categoryId    Int       @map("category_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  category      Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  subtasks      Subtask[]
+
+  @@map("tasks")
+}
+
+model Subtask {
+  id          Int      @id @default(autoincrement())
+  title       String
+  isCompleted Boolean  @default(false) @map("is_completed")
+  taskId      Int      @map("task_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@map("subtasks")
+}
+
+enum PriorityEnum {
+  NONE
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum StatusEnum {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+}
