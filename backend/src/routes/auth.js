@@ -18,5 +18,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 router.post('/signup', upload.single('photo'), signup);
 router.post('/login', login);
+//TODO:logout
 
 export default router;
