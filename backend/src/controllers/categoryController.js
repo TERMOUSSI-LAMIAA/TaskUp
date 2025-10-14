@@ -1,4 +1,4 @@
-import {createCategory,getAllCategories } from '../services/categoryService.js';
+import {createCategory,getAllCategories ,getCategoryById} from '../services/categoryService.js';
 
 
 export const addCategory = async (req, res) => {
@@ -18,6 +18,19 @@ export const listCategories = async (req, res) => {
   try {
     const categories = await getAllCategories(req.user.userId);
     res.json(categories);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getCategory = async (req, res) => {
+  try {
+    const category = await getCategoryById(
+      parseInt(req.params.id),
+      req.user.userId
+    );
+    if (!category) return res.status(404).json({ message: 'Category not found' });
+    res.json(category);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

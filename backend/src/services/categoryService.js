@@ -15,3 +15,10 @@ export const getAllCategories = async (userId) => {
     include: { tasks: true },
   });
 };
+
+export const getCategoryById = async (id, userId) => {
+  return await prisma.category.findFirst({
+    where: { id, userId },
+    include: { tasks: true },
+  });
+};
