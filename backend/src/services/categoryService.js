@@ -8,3 +8,10 @@ export const createCategory = async (userId, data) => {
     },
   });
 };
+
+export const getAllCategories = async (userId) => {
+  return await prisma.category.findMany({
+    where: { userId },
+    include: { tasks: true },
+  });
+};

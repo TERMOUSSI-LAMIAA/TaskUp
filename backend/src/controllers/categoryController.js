@@ -1,4 +1,4 @@
-import {createCategory } from '../services/categoryService.js';
+import {createCategory,getAllCategories } from '../services/categoryService.js';
 
 
 export const addCategory = async (req, res) => {
@@ -10,5 +10,15 @@ export const addCategory = async (req, res) => {
     res.status(201).json({ message: 'Category created successfully', category });
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+};
+
+
+export const listCategories = async (req, res) => {
+  try {
+    const categories = await getAllCategories(req.user.userId);
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

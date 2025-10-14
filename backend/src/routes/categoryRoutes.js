@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import { authenticateToken } from '../middleware/auth.js';
-import { addCategory } from '../controllers/categoryController.js';
+import { addCategory ,listCategories} from '../controllers/categoryController.js';
 
 const router = express.Router();
 
@@ -15,5 +15,6 @@ const upload = multer({ storage });
 router.use(authenticateToken);
 
 router.post('/', upload.single('image'), addCategory);
+router.get('/', listCategories);
 
 export default router;
