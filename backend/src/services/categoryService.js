@@ -40,7 +40,6 @@ export const updateCategory = async (userId, categoryId, categoryData) => {
 
       if (fs.existsSync(oldImagePath)) {
         fs.unlinkSync(oldImagePath);
-        console.log(`✅ Ancienne image supprimée: ${category.image}`);
       }
     }
   } else {
@@ -51,5 +50,27 @@ export const updateCategory = async (userId, categoryId, categoryData) => {
     where: { id: categoryId },
     data: categoryData,
     include: { tasks: true },
+  });
+};
+
+export const deleteCategory = async (userId, categoryId) => {
+  const category = await prisma.category.findUnique({ 
+    where: { id: categoryId } 
+  });
+  
+  if (!category || category.userId !== userId) {
+    throw new Error("Category not found or access denied");
+  }
+
+  if (category.image) {
+    const imagePath = path.join(process.cwd(), "uploads", "categories", category.image);
+
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+    }
+  }
+
+  return await prisma.category.delete({ 
+    where: { id: categoryId } 
   });
 };

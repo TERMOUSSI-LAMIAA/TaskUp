@@ -1,4 +1,4 @@
-import {createCategory,getAllCategories ,getCategoryById,updateCategory} from '../services/categoryService.js';
+import {createCategory,getAllCategories ,getCategoryById,updateCategory,deleteCategory} from '../services/categoryService.js';
 
 
 export const addCategory = async (req, res) => {
@@ -55,6 +55,15 @@ export const editCategory = async (req, res) => {
       category 
     });
 
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+export const removeCategory = async (req, res) => {
+  try {
+    await deleteCategory(req.user.userId, parseInt(req.params.id));
+    res.json({ message: "Category deleted successfully" });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
