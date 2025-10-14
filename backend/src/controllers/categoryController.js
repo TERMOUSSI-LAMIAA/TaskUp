@@ -1,4 +1,4 @@
-import {createCategory,getAllCategories ,getCategoryById} from '../services/categoryService.js';
+import {createCategory,getAllCategories ,getCategoryById,updateCategory} from '../services/categoryService.js';
 
 
 export const addCategory = async (req, res) => {
@@ -33,5 +33,29 @@ export const getCategory = async (req, res) => {
     res.json(category);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const editCategory = async (req, res) => {
+  try {
+    const categoryData = { ...req.body };
+
+    if (req.file) {
+      categoryData.image = req.file.filename;
+    }
+
+    const category = await updateCategory(
+      req.user.userId, 
+      parseInt(req.params.id), 
+      categoryData
+    );
+
+    res.json({ 
+      message: "Category updated successfully", 
+      category 
+    });
+
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };
