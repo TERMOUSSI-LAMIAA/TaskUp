@@ -13,3 +13,9 @@ export const createSubtask = async (taskId, data) => {
 
   return subtask;
 };
+
+export const getSubtasksByTask = async (taskId) => {
+  return await prisma.subtask.findMany({
+    where: { taskId },
+  });
+};
