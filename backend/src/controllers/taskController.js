@@ -1,4 +1,4 @@
-import {createTask,getTasksByCategory,updateTask,deleteTask } from '../services/taskService.js'
+import {createTask,getTasksByCategory,updateTask,deleteTask,getTaskById } from '../services/taskService.js'
 
 export const addTask = async (req, res) => {
   try {
@@ -41,5 +41,16 @@ export const removeTask = async (req, res) => {
     res.status(200).json({ message: "Task deleted successfully" });
   } catch (err) {
    res.status(400).json({ message: err.message });
+  }
+};
+
+export const getTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const task = await getTaskById(parseInt(id));
+    if (!task) return res.status(404).json({ message: "Task not found" });
+    res.status(200).json(task);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };

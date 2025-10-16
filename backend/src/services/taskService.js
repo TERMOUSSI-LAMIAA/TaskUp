@@ -48,3 +48,10 @@ export const deleteTask = async (userId, taskId) => {
     where: { id: taskId },
   });
 };
+
+export const getTaskById = async (id) => {
+  return await prisma.task.findUnique({
+    where: { id },
+    include: { subtasks: true, category: true },
+  });
+};
