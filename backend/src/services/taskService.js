@@ -29,3 +29,22 @@ export const updateTask = async (id, updates) => {
     data: updates,
   });
 };
+
+export const deleteTask = async (userId, taskId) => {
+  const task = await prisma.task.findFirst({
+    where: { 
+      id: taskId,
+      category: { 
+        userId: userId  
+      }
+    }
+  });
+
+  if (!task) {
+    throw new Error("Task not found or access denied");
+  }
+
+  return await prisma.task.delete({
+    where: { id: taskId },
+  });
+};
