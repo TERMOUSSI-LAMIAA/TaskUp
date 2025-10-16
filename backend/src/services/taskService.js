@@ -11,3 +11,10 @@ export const createTask = async (categoryId, taskData) => {
     },
   });
 };
+
+export const getTasksByCategory = async (categoryId) => {
+  return await prisma.task.findMany({
+    where: { categoryId },
+    include: { subtasks: true },
+  });
+};
