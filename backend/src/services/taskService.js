@@ -18,3 +18,14 @@ export const getTasksByCategory = async (categoryId) => {
     include: { subtasks: true },
   });
 };
+
+export const updateTask = async (id, updates) => {
+    if (updates.categoryId !== undefined) {
+    throw new Error("Task category cannot be changed once created. Please create a new task in the desired category.");
+  }
+  
+  return await prisma.task.update({
+    where: { id },
+    data: updates,
+  });
+};
