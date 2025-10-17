@@ -30,3 +30,24 @@ export const updateSubtask = async (id, data) => {
     data,
   });
 };
+
+export const deleteSubtask = async (userId, subtaskId) => {
+  const subtask = await prisma.subtask.findFirst({
+    where: { 
+      id: subtaskId,
+      task: {
+        category: { 
+          userId: userId  
+        }
+      }
+    }
+  });
+
+  if (!subtask) {
+    throw new Error("Subtask not found or access denied");
+  }
+
+  return await prisma.subtask.delete({
+    where: { id: subtaskId },
+  });
+};
