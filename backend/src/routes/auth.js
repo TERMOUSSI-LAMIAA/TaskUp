@@ -2,6 +2,8 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import { signup,login } from '../controllers/authController.js'
+import {signupValidation,loginValidation} from '../validators/authValidator.js'
+import {validateRequest} from '../middleware/validateRequest.js'
 
 const router = express.Router();
 
@@ -16,8 +18,7 @@ const storage = multer.diskStorage({
 
 
 const upload = multer({ storage });
-router.post('/signup', upload.single('photo'), signup);
-router.post('/login', login);
-//TODO:logout
+router.post('/signup', upload.single('photo'),signupValidation,validateRequest, signup);
+router.post('/login', loginValidation,validateRequest,login);
 
 export default router;
