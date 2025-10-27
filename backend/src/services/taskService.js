@@ -1,6 +1,16 @@
 import prisma from "../config/database.js";
 
-export const createTask = async (categoryId, taskData) => {
+export const createTask = async (userId, categoryId, taskData) => {
+  const category = await prisma.category.findFirst({
+    where: {
+      id: categoryId,
+      userId: userId,
+    },
+  });
+
+  if (!category) {
+    throw new Error("Category not found or access denied");
+  }
   const { startDatetime, endDatetime, ...restData } = taskData;
   return await prisma.task.create({
     data: {
@@ -12,18 +22,42 @@ export const createTask = async (categoryId, taskData) => {
   });
 };
 
-export const getTasksByCategory = async (categoryId) => {
+export const getTasksByCategory = async (userId, categoryId) => {
+  const category = await prisma.category.findFirst({
+    where: {
+      id: categoryId,
+      userId: userId,
+    },
+  });
+
+  if (!category) {
+    throw new Error("Category not found or access denied");
+  }
+
   return await prisma.task.findMany({
     where: { categoryId },
     include: { subtasks: true },
   });
 };
 
-export const updateTask = async (id, updates) => {
-    if (updates.categoryId !== undefined) {
+export const updateTask = async (userId, id, updates) => {
+  const task = await prisma.task.findFirst({
+    where: {
+      id: id,
+      category: {
+        userId: userId,
+      },
+    },
+  });
+
+  if (!task) {
+    throw new Error("Task not found or access denied");
+  }
+
+  if (updates.categoryId !== undefined) {
     throw new Error("Task category cannot be changed once created. Please create a new task in the desired category.");
   }
-  
+
   return await prisma.task.update({
     where: { id },
     data: updates,
@@ -32,12 +66,12 @@ export const updateTask = async (id, updates) => {
 
 export const deleteTask = async (userId, taskId) => {
   const task = await prisma.task.findFirst({
-    where: { 
+    where: {
       id: taskId,
-      category: { 
-        userId: userId  
-      }
-    }
+      category: {
+        userId: userId,
+      },
+    },
   });
 
   if (!task) {
@@ -49,9 +83,20 @@ export const deleteTask = async (userId, taskId) => {
   });
 };
 
-export const getTaskById = async (id) => {
-  return await prisma.task.findUnique({
-    where: { id },
+export const getTaskById = async (userId, id) => {
+  const task = await prisma.task.findFirst({
+    where: {
+      id: id,
+      category: {
+        userId: userId,
+      },
+    },
     include: { subtasks: true, category: true },
   });
+
+  if (!task) {
+    throw new Error("Task not found or access denied");
+  }
+
+  return task;
 };

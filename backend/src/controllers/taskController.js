@@ -1,11 +1,12 @@
-import {createTask,getTasksByCategory,updateTask,deleteTask,getTaskById } from '../services/taskService.js'
+import { createTask, getTasksByCategory, updateTask, deleteTask, getTaskById } from "../services/taskService.js";
 
 export const addTask = async (req, res) => {
   try {
     const { categoryId } = req.params;
     const taskData = req.body;
+    const userId = req.user.userId;
 
-    const task = await createTask(parseInt(categoryId), taskData);
+    const task = await createTask(userId,parseInt(categoryId), taskData);
     res.status(201).json({ message: "Task created successfully", task });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -15,7 +16,8 @@ export const addTask = async (req, res) => {
 export const listTasksByCategory = async (req, res) => {
   try {
     const { categoryId } = req.params;
-    const tasks = await getTasksByCategory(parseInt(categoryId));
+    const userId = req.user.userId;
+    const tasks = await getTasksByCategory(userId, parseInt(categoryId));
     res.status(200).json(tasks);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -25,7 +27,8 @@ export const listTasksByCategory = async (req, res) => {
 export const editTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedTask = await updateTask(parseInt(id), req.body);
+    const userId = req.user.userId;
+    const updatedTask = await updateTask(userId, parseInt(id), req.body);
     res.status(200).json({ message: "Task updated successfully", task: updatedTask });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -35,19 +38,21 @@ export const editTask = async (req, res) => {
 export const removeTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id; 
-    
-    await deleteTask(userId, parseInt(id)); 
+    const userId = req.user.userId;
+
+    await deleteTask(userId, parseInt(id));
     res.status(200).json({ message: "Task deleted successfully" });
   } catch (err) {
-   res.status(400).json({ message: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
 export const getTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const task = await getTaskById(parseInt(id));
+    const userId = req.user.userId;
+
+    const task = await getTaskById(userId, parseInt(id));
     if (!task) return res.status(404).json({ message: "Task not found" });
     res.status(200).json(task);
   } catch (err) {
