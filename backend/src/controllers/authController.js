@@ -19,7 +19,7 @@ export const signup = async (req, res) => {
         photo: result.photo,
       },
       token: result.token,
-    });
+    });                         
   } catch (err) {
     res.status(400).json({
       message: err.message,
