@@ -15,10 +15,15 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-
 const handleLogout = async () => {
+  try {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
     router.push("/login");
-
+  } catch (error) {
+    console.error("Logout error:", error);
+    router.push("/login");
+  }
 };
 </script>

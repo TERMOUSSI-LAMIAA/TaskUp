@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import {addSubtask,listSubtasksByTask,editSubtask,removeSubtask} from '../controllers/subtaskController.js';
-import {createSubtaskValidation,updateSubtaskValidation} from '../validators/subtaskValidator';
+import {createSubtaskValidation,updateSubtaskValidation} from '../validators/subtaskValidator.js';
 import {validateRequest} from '../middleware/validateRequest.js';
 
 

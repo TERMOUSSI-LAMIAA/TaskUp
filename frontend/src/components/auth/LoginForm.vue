@@ -74,6 +74,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { login } from "@/services/authService.js";
 
 const emit = defineEmits(["login-success"]);
 
@@ -110,6 +111,32 @@ const validateForm = () => {
 
 const handleLogin = async () => {
   if (!validateForm()) return;
-  emit("login-success");
+  isLoading.value = true;
+  errors.value.general = "";
+
+  try {
+    const response = await login({
+      email: form.value.email,
+      password: form.value.password,
+    });
+
+    localStorage.setItem("token", response.data.token);
+     localStorage.setItem("user", JSON.stringify(response.data.user));
+    emit("login-success");
+  } catch (error) {
+    console.error("Login error:", error);
+
+    if (error.response?.status === 401) {
+      errors.value.general = "Invalid email or password";
+    } else if (error.response?.status === 400) {
+      errors.value.general = "Please check your input fields";
+    } else if (error.response?.data?.message) {
+      errors.value.general = error.response.data.message;
+    } else {
+      errors.value.general = "Login failed. Please try again.";
+    }
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
