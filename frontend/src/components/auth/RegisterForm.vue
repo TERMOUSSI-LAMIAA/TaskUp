@@ -1,21 +1,56 @@
 <template>
   <form @submit.prevent="handleRegister" class="space-y-5">
+    <!-- Profile Photo Upload -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700">Profile Photo</label>
+      <div class="flex items-center gap-4">
+        <!-- Photo Preview -->
+        <div class="relative">
+          <img v-if="form.photoPreview" :src="form.photoPreview" class="w-16 h-16 rounded-full object-cover border-2 border-emerald-200" alt="Profile preview" />
+          <div v-else class="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-100 to-purple-100 border-2 border-dashed border-emerald-300 flex items-center justify-center">
+            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Upload Button -->
+        <div class="flex-1">
+          <input id="photo" type="file" accept="image/*" @change="handlePhotoUpload" class="hidden" />
+          <label
+            for="photo"
+            class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-emerald-200 rounded-lg text-emerald-600 hover:bg-emerald-50 transition-all duration-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            {{ form.photo ? "Change Photo" : "Upload Photo" }}
+          </label>
+          <p class="text-xs text-gray-500 mt-1">Optional - JPG, PNG up to 2MB</p>
+        </div>
+      </div>
+      <span v-if="errors.photo" class="text-sm text-red-500">{{ errors.photo }}</span>
+    </div>
+
     <!-- Username Input -->
     <div class="space-y-2">
-      <label for="name" class="block text-sm font-semibold text-gray-700">Username</label>
+      <label for="username" class="block text-sm font-semibold text-gray-700">Username</label>
       <div class="relative">
         <input
-          id="name"
-          v-model="form.name"
+          id="username"
+          v-model="form.username"
           type="text"
-          placeholder="myname"
+          placeholder="myusername"
           class="w-full px-4 py-3 bg-gradient-to-r from-emerald-50 to-purple-50 border-2 border-emerald-200 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all placeholder-gray-400"
           required />
         <svg class="absolute right-3 top-3.5 w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
       </div>
-      <span v-if="errors.name" class="text-sm text-red-500">{{ errors.name }}</span>
+      <span v-if="errors.username" class="text-sm text-red-500">{{ errors.username }}</span>
     </div>
 
     <!-- Email Input -->
@@ -88,7 +123,7 @@
               stroke-width="2"
               d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
-         <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -124,40 +159,69 @@
 
 <script setup>
 import { ref } from "vue";
+import { signup } from "@/services/authService.js";
 
 const emit = defineEmits(["register-success"]);
 
 const form = ref({
-  name: "",
+  username: "",
   email: "",
   password: "",
   confirmPassword: "",
+  photo: null,
+  photoPreview: null,
 });
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 const isLoading = ref(false);
 const errors = ref({
-  name: "",
+  username: "",
   email: "",
   password: "",
   confirmPassword: "",
+  photo: "",
   general: "",
 });
 
+const handlePhotoUpload = (event) => {
+  const file = event.target.files[0];
+
+  if (file) {
+    if (!file.type.startsWith("image/")) {
+      errors.value.photo = "Please select an image file";
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      errors.value.photo = "Image must be less than 2MB";
+      return;
+    }
+
+    form.value.photo = file;
+    errors.value.photo = "";
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      form.value.photoPreview = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
 const validateForm = () => {
   errors.value = {
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
+    photo: "",
     general: "",
   };
 
-  if (!form.value.name) {
-    errors.value.name = "Name is required";
-  } else if (form.value.name.length < 3) {
-    errors.value.name = "Name must be at least 3 characters long";
+  if (!form.value.username) {
+    errors.value.username = "username is required";
+  } else if (form.value.username.length < 3) {
+    errors.value.username = "username must be at least 3 characters long";
   }
 
   if (!form.value.email) {
@@ -181,6 +245,36 @@ const validateForm = () => {
 
 const handleRegister = async () => {
   if (!validateForm()) return;
-  emit("register-success");
+  isLoading.value = true;
+  errors.value.general = "";
+
+  try {
+    const formData = new FormData();
+    formData.append("username", form.value.username);
+    formData.append("email", form.value.email);
+    formData.append("password", form.value.password);
+
+    if (form.value.photo) {
+      formData.append("photo", form.value.photo);
+    }
+    const response = await signup(formData);
+
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
+    emit("register-success");
+  } catch (error) {
+    console.error("Registration error:", error);
+    if (error.response?.status === 400) {
+      errors.value.general = error.response.data.message || "Registration failed. Please check your input.";
+    } else if (error.response?.status === 409) {
+      errors.value.general = "Email already exists. Please use a different email.";
+    } else if (error.response?.data?.message) {
+      errors.value.general = error.response.data.message;
+    } else {
+      errors.value.general = "Registration failed. Please try again.";
+    }
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
