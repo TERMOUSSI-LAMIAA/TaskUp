@@ -98,9 +98,13 @@ onMounted(() => {
   const user = localStorage.getItem("user");
   if (user) {
     const userData = JSON.parse(user);
-    userName.value = userData.name || "User";
+    userName.value = userData.username || "User";
     userEmail.value = userData.email || "user@email.com";
-    userPhoto.value = userData.photo || "";
+     if (userData.photo) {
+      userPhoto.value = `http://localhost:3000/uploads/profiles/${userData.photo}`;
+    } else {
+      userPhoto.value = "";
+    }
   }
 });
 </script>

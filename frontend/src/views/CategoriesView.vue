@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted , computed} from 'vue'
 import { useRouter } from 'vue-router'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import CategoryGrid from '@/components/categories/CategoryGrid.vue'
@@ -45,7 +45,18 @@ import CategoryGrid from '@/components/categories/CategoryGrid.vue'
 const router = useRouter()
 const categories = ref([])
 
-const username = ref('User')
+const username = computed(() => {
+  try {
+    const userData = localStorage.getItem('user')
+    if (userData) {
+      const user = JSON.parse(userData)
+      return user.username 
+    }
+  } catch (error) {
+    console.error('Error parsing user data:', error)
+  }
+  return 'User' 
+})
 
 onMounted(() => {
   loadCategories()
