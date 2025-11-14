@@ -46,12 +46,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref ,onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import AppSidebar from "@/components/layout/AppSidebar.vue";
 import TaskList from "@/components/tasks/TaskList.vue";
 import TaskForm from "@/components/tasks/TaskForm.vue";
 import TaskDetailModal from "@/components/tasks/TaskDetailModal.vue";
+import { getCategoryById } from "@/services/categoryService.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -60,35 +61,20 @@ const tasks = ref([]);
 const showAddTaskForm = ref(false);
 const selectedTask = ref(null);
 
-const loadCategory = () => {
-  category.value = { id: 1, name: "Work" }; // Mock category
-};
+const categoryId = route.params.id;
 
-const loadTasks = () => {
-  tasks.value = [
-    {
-      id: 1,
-      title: "Complete project proposal",
-      description: "Create the project proposal document",
-      priority: "HIGH",
-      status: "TODO",
-      categoryId: 1,
-      startDate: "2024-01-15",
-      endDate: "2024-01-20",
-      subtasks: [],
-    },
-    {
-      id: 2,
-      title: "Team meeting",
-      description: "Weekly team sync meeting",
-      priority: "MEDIUM",
-      status: "IN_PROGRESS",
-      categoryId: 1,
-      startDate: "2024-01-16",
-      endDate: "2024-01-16",
-      subtasks: [],
-    },
-  ];
+onMounted(() => {
+  loadCategoryWithTasks();
+});
+
+const loadCategoryWithTasks = async () => {
+  try {
+    const response = await getCategoryById(categoryId);
+    category.value = response.data;
+    tasks.value = response.data.tasks || []; 
+  } catch (error) {
+    console.error('Failed to load category with tasks:', error);
+  } 
 };
 
 const handleAddTask = (formData) => {
@@ -116,7 +102,5 @@ const handleSaveTask = (updatedTask) => {
   }
   selectedTask.value = null; 
 };
-// Initialize mock data
-loadCategory();
-loadTasks();
+
 </script>
