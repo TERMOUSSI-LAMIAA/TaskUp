@@ -41,6 +41,7 @@ import { ref, onMounted , computed} from 'vue'
 import { useRouter } from 'vue-router'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import CategoryGrid from '@/components/categories/CategoryGrid.vue'
+import { getCategories } from '@/services/categoryService.js'  
 
 const router = useRouter()
 const categories = ref([])
@@ -62,8 +63,13 @@ onMounted(() => {
   loadCategories()
 })
 
-const loadCategories = () => {
-  
+const loadCategories =async  () => {
+  try {
+    const response = await getCategories()
+    categories.value = response.data
+  } catch (error) {
+    console.error('Failed to load categories:', error)
+  }
 }
 
 const handleViewCategory = (categoryId) => {

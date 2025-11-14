@@ -2,8 +2,8 @@
   <div class="group relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100">
     <!-- Image Section -->
     <div class="relative h-48 overflow-hidden cursor-pointer" @click="$emit('view', category.id)">
-      <div v-if="category.image" class="w-full h-full">
-        <img :src="category.image" :alt="category.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+      <div v-if="categoryImage" class="w-full h-full">
+        <img :src="categoryImage" :alt="category.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
       </div>
       <div v-else class="w-full h-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
       </div>
@@ -69,6 +69,11 @@ const props = defineProps({
 });
 
 defineEmits(["view", "edit", "delete"]);
+
+const categoryImage = computed(() => {
+  return props.category.image ? `http://localhost:3000/uploads/categories/${props.category.image}` : '';
+});
+
 
 const taskCount = computed(() => {
   return props.tasks.filter((task) => task.categoryId === props.category.id).length;
