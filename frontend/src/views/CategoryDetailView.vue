@@ -53,6 +53,7 @@ import TaskList from "@/components/tasks/TaskList.vue";
 import TaskForm from "@/components/tasks/TaskForm.vue";
 import TaskDetailModal from "@/components/tasks/TaskDetailModal.vue";
 import { getCategoryById } from "@/services/categoryService.js";
+import { createTask } from "@/services/taskService.js";  
 
 const router = useRouter();
 const route = useRoute();
@@ -77,14 +78,18 @@ const loadCategoryWithTasks = async () => {
   } 
 };
 
-const handleAddTask = (formData) => {
-  const newTask = {
-    ...formData,
-    id: Date.now(),
-    subtasks: [],
-  };
-  tasks.value.push(newTask);
-  showAddTaskForm.value = false;
+const handleAddTask =async  (formData) => {
+try {
+    const taskData = {
+      ...formData
+    };
+
+     await createTask(categoryId,taskData);
+     await loadCategoryWithTasks();
+    showAddTaskForm.value = false;
+  } catch (error) {
+    console.error('Failed to create task:', error);
+  }
 };
 
 const handleViewTask = (task) => { 

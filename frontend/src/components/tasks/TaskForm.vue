@@ -105,9 +105,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref  } from 'vue'
 
 const emit = defineEmits(['cancel', 'submit'])
+
+const props = defineProps({
+  categoryId: {
+    type: [String, Number],
+    required: true
+  }
+})
 
 const formData = ref({
   title: '',
@@ -120,6 +127,10 @@ const formData = ref({
 
 const handleSubmit = () => {
   if (formData.value.title.trim()) {
+     const taskData = {
+      ...formData.value,
+      categoryId: props.categoryId
+    }
     emit('submit', formData.value)
     
     // Reset form
