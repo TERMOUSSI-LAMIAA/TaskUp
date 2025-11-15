@@ -5,8 +5,7 @@
       <div v-if="categoryImage" class="w-full h-full">
         <img :src="categoryImage" :alt="category.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
       </div>
-      <div v-else class="w-full h-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
-      </div>
+      <div v-else class="w-full h-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center"></div>
       <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
     </div>
     <!-- Content Section -->
@@ -46,6 +45,18 @@
           View
         </button>
         <button @click="$emit('edit', category.id)" class="flex-1 px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold transition-all duration-200 hover:bg-blue-50">Edit</button>
+        <button
+          @click="$emit('delete', category.id)"
+          class="px-4 py-2 bg-red-500 text-white rounded-lg font-semibold transition-all duration-200 hover:bg-red-600 hover:shadow-lg flex items-center justify-center"
+          title="Delete Category">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -71,9 +82,8 @@ const props = defineProps({
 defineEmits(["view", "edit", "delete"]);
 
 const categoryImage = computed(() => {
-  return props.category.image ? `http://localhost:3000/uploads/categories/${props.category.image}` : '';
+  return props.category.image ? `http://localhost:3000/uploads/categories/${props.category.image}` : "";
 });
-
 
 const taskCount = computed(() => {
   return props.tasks.filter((task) => task.categoryId === props.category.id).length;
@@ -87,5 +97,4 @@ const progressPercentage = computed(() => {
   if (taskCount.value === 0) return 0;
   return Math.round((completedCount.value / taskCount.value) * 100);
 });
-
 </script>
