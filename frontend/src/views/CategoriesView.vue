@@ -26,7 +26,7 @@
 
       <!-- Categories Grid -->
       <div class="p-8">
-        <CategoryGrid :categories="categories" @view="handleViewCategory" @edit-category="handleEditCategory" @add-category="handleAddCategory" />
+        <CategoryGrid :categories="categories" @view="handleViewCategory" @add-category="handleAddCategory" @update-category="handleUpdateCategory" />
       </div>
     </div>
   </div>
@@ -37,7 +37,7 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import AppSidebar from "@/components/layout/AppSidebar.vue";
 import CategoryGrid from "@/components/categories/CategoryGrid.vue";
-import { getCategories, createCategory } from "@/services/categoryService.js";
+import { getCategories, updateCategory, createCategory } from "@/services/categoryService.js";
 
 const router = useRouter();
 const categories = ref([]);
@@ -86,7 +86,18 @@ const handleAddCategory = async (categoryData) => {
   }
 };
 
-const handleEditCategory = (categoryId) => {
-  console.log("Edit category:", categoryId);
+const handleUpdateCategory = async ({ categoryId, formData }) => {
+  try {
+    const formDataToSend = new FormData();
+    formDataToSend.append("name", formData.name);
+    if (formData.image) {
+      formDataToSend.append("image", formData.image);
+    }
+
+    await updateCategory(categoryId, formDataToSend);
+    await loadCategories();
+  } catch (error) {
+    console.error("Failed to update category:", error);
+  }
 };
 </script>

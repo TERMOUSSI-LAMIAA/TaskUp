@@ -27,6 +27,18 @@
       <CategoryForm @submit="handleAddCategory" @cancel="showAddForm = false" />
     </div>
   </div>
+
+   <!-- Edit Category Modal -->
+  <div v-if="editingCategory" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Edit Category</h2>
+      <CategoryForm 
+        :category="editingCategory"
+        @submit="handleUpdateCategory"
+        @cancel="editingCategory = null" 
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -37,6 +49,7 @@ import CategoryForm from './CategoryForm.vue'
 
 const router = useRouter()
 const showAddForm = ref(false)
+const editingCategory = ref(null)
 
 const props = defineProps({
   categories: {
@@ -45,14 +58,25 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['add-category', 'edit-category'])
+const emit = defineEmits(['add-category','update-category'])
 
 const handleViewCategory = (categoryId) => {
   router.push(`/category/${categoryId}`)
 }
 
 const handleEditCategory = (categoryId) => {
-  emit('edit-category', categoryId)
+  const categoryToEdit = props.categories.find(cat => cat.id === categoryId)
+  if (categoryToEdit) {
+    editingCategory.value = { ...categoryToEdit }
+  }
+}
+
+const handleUpdateCategory = (formData) => {
+  emit('update-category', {
+    categoryId: editingCategory.value.id,
+    formData: formData
+  })
+  editingCategory.value = null
 }
 
 const handleAddCategory = (formData) => {
