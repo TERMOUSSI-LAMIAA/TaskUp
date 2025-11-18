@@ -42,6 +42,21 @@
 
     <!-- Task Detail Modal -->
     <TaskDetailModal v-if="selectedTask" :task="selectedTask" @close="selectedTask = null" @save="handleSaveTask" />
+ 
+    <!-- Delete Task Confirmation Modal -->
+    <div v-if="deletingTask" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Delete Task</h2>
+        <p class="text-gray-600 mb-6">
+          Are you sure you want to delete this task?
+          <span class="font-semibold text-red-600 block mt-2">This action cannot be undone.</span>
+        </p>
+        <div class="flex gap-3">
+          <button @click="confirmTaskDelete" class="flex-1 bg-red-500 text-white font-semibold py-3 rounded-lg hover:bg-red-600 transition-colors">Delete</button>
+          <button @click="deletingTask = null" class="flex-1 bg-gray-200 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-300 transition-colors">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -53,7 +68,7 @@ import TaskList from "@/components/tasks/TaskList.vue";
 import TaskForm from "@/components/tasks/TaskForm.vue";
 import TaskDetailModal from "@/components/tasks/TaskDetailModal.vue";
 import { getCategoryById } from "@/services/categoryService.js";
-import { createTask, updateTask } from "@/services/taskService.js";
+import { createTask, updateTask, deleteTask } from "@/services/taskService.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -61,6 +76,7 @@ const category = ref(null);
 const tasks = ref([]);
 const showAddTaskForm = ref(false);
 const selectedTask = ref(null);
+const deletingTask = ref(null); 
 
 const categoryId = route.params.id;
 
@@ -96,8 +112,20 @@ const handleViewTask = (task) => {
   selectedTask.value = task;
 };
 
-const handleDeleteTask = (taskId) => {
-  tasks.value = tasks.value.filter((t) => t.id !== taskId);
+const handleDeleteTask = async (taskId) => {
+   deletingTask.value = taskId;
+};
+
+const confirmTaskDelete = async () => {
+  if (deletingTask.value) {
+    try {
+      await deleteTask(deletingTask.value);
+      await loadCategoryWithTasks(); 
+      deletingTask.value = null; 
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+    }
+  }
 };
 
 const handleSaveTask = async (updatedTask) => {
@@ -114,7 +142,7 @@ const handleSaveTask = async (updatedTask) => {
     await loadCategoryWithTasks();
     selectedTask.value = null;
   } catch (error) {
-     console.error("Failed to update task:", error);
+    console.error("Failed to update task:", error);
   }
 };
 </script>

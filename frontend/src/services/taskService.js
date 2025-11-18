@@ -7,3 +7,7 @@ export function createTask(categoryId, taskData) {
 export function updateTask(taskId, taskData) {
   return api.put(`api/tasks/${taskId}`, taskData);
 }
+
+export function deleteTask(taskId) {
+  return api.delete(`api/tasks/${taskId}`);
+}
