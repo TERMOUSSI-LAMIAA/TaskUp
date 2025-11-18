@@ -6,18 +6,8 @@
         <div v-if="!isEditing">
           <h2 class="text-xl font-semibold text-gray-900">{{ task.title }}</h2>
         </div>
-        <input 
-          v-else
-          v-model="editedTask.title"
-          class="text-xl font-semibold text-gray-900 bg-gray-50 border border-gray-300 rounded px-3 py-1 w-full"
-          placeholder="Task title"
-        />
-        <button 
-          class="text-gray-400 hover:text-gray-600 text-2xl transition-colors w-8 h-8 flex items-center justify-center"
-          @click="$emit('close')"
-        >
-          ×
-        </button>
+        <input v-else v-model="editedTask.title" class="text-xl font-semibold text-gray-900 bg-gray-50 border border-gray-300 rounded px-3 py-1 w-full" placeholder="Task title" />
+        <button class="text-gray-400 hover:text-gray-600 text-2xl transition-colors w-8 h-8 flex items-center justify-center" @click="$emit('close')">×</button>
       </div>
 
       <!-- Body -->
@@ -26,32 +16,18 @@
           <!-- Description -->
           <div>
             <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">Description</label>
-            <p v-if="!isEditing" class="text-gray-900">{{ task.description || 'No description' }}</p>
-            <textarea 
-              v-else
-              v-model="editedTask.description"
-              rows="3"
-              class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-900"
-              placeholder="Task description"
-            />
+            <p v-if="!isEditing" class="text-gray-900">{{ task.description || "No description" }}</p>
+            <textarea v-else v-model="editedTask.description" rows="3" class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-900" placeholder="Task description" />
           </div>
 
           <!-- Priority & Status -->
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">Priority</label>
-              <span 
-                v-if="!isEditing"
-                class="inline-block px-3 py-1 rounded-md text-sm font-semibold"
-                :class="getPriorityClass(task.priority)"
-              >
+              <span v-if="!isEditing" class="inline-block px-3 py-1 rounded-md text-sm font-semibold" :class="getPriorityClass(task.priority)">
                 {{ task.priority }}
               </span>
-              <select 
-                v-else
-                v-model="editedTask.priority"
-                class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-1 text-sm font-semibold"
-              >
+              <select v-else v-model="editedTask.priority" class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-1 text-sm font-semibold">
                 <option value="LOW">Low</option>
                 <option value="MEDIUM">Medium</option>
                 <option value="HIGH">High</option>
@@ -59,18 +35,10 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">Status</label>
-              <span 
-                v-if="!isEditing"
-                class="inline-block px-3 py-1 rounded-md text-sm font-semibold"
-                :class="getStatusClass(task.status)"
-              >
+              <span v-if="!isEditing" class="inline-block px-3 py-1 rounded-md text-sm font-semibold" :class="getStatusClass(task.status)">
                 {{ formatStatus(task.status) }}
               </span>
-              <select 
-                v-else
-                v-model="editedTask.status"
-                class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-1 text-sm font-semibold"
-              >
+              <select v-else v-model="editedTask.status" class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-1 text-sm font-semibold">
                 <option value="TODO">To Do</option>
                 <option value="IN_PROGRESS">In Progress</option>
                 <option value="COMPLETED">Completed</option>
@@ -82,63 +50,30 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">Start Date</label>
-              <p v-if="!isEditing" class="text-gray-900">{{ formatDate(task.startDate) }}</p>
-              <input 
-                v-else
-                v-model="editedTask.startDate"
-                type="date"
-                class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-1 text-gray-900"
-              />
+              <p v-if="!isEditing" class="text-gray-900">{{ formatDate(task.startDatetime) }}</p>
+              <input v-else v-model="editedTask.startDate" type="date" class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-1 text-gray-900" />
             </div>
             <div>
               <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">End Date</label>
-              <p v-if="!isEditing" class="text-gray-900">{{ formatDate(task.endDate) }}</p>
-              <input 
-                v-else
-                v-model="editedTask.endDate"
-                type="date"
-                class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-1 text-gray-900"
-              />
+              <p v-if="!isEditing" class="text-gray-900">{{ formatDate(task.endDatetime) }}</p>
+              <input v-else v-model="editedTask.endDate" type="date" class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-1 text-gray-900" />
             </div>
           </div>
         </div>
 
         <!-- Subtasks -->
-        <SubtaskList 
-          :subtasks="task.subtasks"
-          @add-subtask="handleAddSubtask"
-        />
+        <SubtaskList :subtasks="task.subtasks" @add-subtask="handleAddSubtask" />
       </div>
 
       <!-- Footer -->
       <div class="flex gap-3 p-6 border-t border-gray-200">
         <template v-if="!isEditing">
-          <button 
-            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition-colors"
-            @click="enableEditMode"
-          >
-            Edit
-          </button>
-          <button 
-            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-semibold transition-colors"
-            @click="$emit('close')"
-          >
-            Close
-          </button>
+          <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition-colors" @click="enableEditMode">Edit</button>
+          <button class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-semibold transition-colors" @click="$emit('close')">Close</button>
         </template>
         <template v-else>
-          <button 
-            class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-lg font-semibold transition-colors"
-            @click="saveChanges"
-          >
-            Save
-          </button>
-          <button 
-            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-semibold transition-colors"
-            @click="cancelEdit"
-          >
-            Cancel
-          </button>
+          <button class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-lg font-semibold transition-colors" @click="saveChanges">Save</button>
+          <button class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-semibold transition-colors" @click="cancelEdit">Cancel</button>
         </template>
       </div>
     </div>
@@ -146,72 +81,73 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import SubtaskList from '../subtasks/SubtaskList.vue'
+import { ref, reactive } from "vue";
+import SubtaskList from "../subtasks/SubtaskList.vue";
 
 const props = defineProps({
   task: {
     type: Object,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
-const emit = defineEmits(['close', 'save', 'add-subtask', 'toggle-subtask', 'delete-subtask'])
+const emit = defineEmits(["close", "save", "add-subtask", "toggle-subtask", "delete-subtask"]);
 
-const isEditing = ref(false)
-const editedTask = reactive({})
+const isEditing = ref(false);
+const editedTask = reactive({});
 
 const enableEditMode = () => {
-  Object.assign(editedTask, props.task)
-  isEditing.value = true
-}
+  Object.assign(editedTask, props.task);
+  isEditing.value = true;
+};
 
 const cancelEdit = () => {
-  isEditing.value = false
-  Object.keys(editedTask).forEach(key => delete editedTask[key])
-}
+  isEditing.value = false;
+  Object.keys(editedTask).forEach((key) => delete editedTask[key]);
+};
 
 const saveChanges = () => {
-  emit('save', { ...editedTask })
-  isEditing.value = false
-}
+  emit("save", { ...editedTask });
+  isEditing.value = false;
+};
 
 const formatStatus = (status) => {
   const statuses = {
-    'TODO': 'To Do',
-    'IN_PROGRESS': 'In Progress',
-    'COMPLETED': 'Completed'
-  }
-  return statuses[status] || status
-}
+    TODO: "To Do",
+    IN_PROGRESS: "In Progress",
+    COMPLETED: "Completed",
+  };
+  return statuses[status] || status;
+};
 
 const formatDate = (date) => {
-  if (!date) return 'Not set'
-  return new Date(date).toLocaleDateString('en-US', { 
-    year: 'numeric',
-    month: 'long', 
-    day: 'numeric' 
-  })
-}
+  if (!date) return "Not set";
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 const getPriorityClass = (priority) => {
   return {
-    'bg-red-100 text-red-800': priority === 'HIGH',
-    'bg-yellow-100 text-yellow-800': priority === 'MEDIUM',
-    'bg-green-100 text-green-800': priority === 'LOW'
-  }
-}
+    "bg-red-100 text-red-800": priority === "HIGH",
+    "bg-yellow-100 text-yellow-800": priority === "MEDIUM",
+    "bg-green-100 text-green-800": priority === "LOW",
+  };
+};
 
 const getStatusClass = (status) => {
   return {
-    'bg-blue-100 text-blue-800': status === 'TODO',
-    'bg-yellow-100 text-yellow-800': status === 'IN_PROGRESS',
-    'bg-green-100 text-green-800': status === 'COMPLETED'
-  }
-}
+    "bg-blue-100 text-blue-800": status === "TODO",
+    "bg-yellow-100 text-yellow-800": status === "IN_PROGRESS",
+    "bg-green-100 text-green-800": status === "COMPLETED",
+  };
+};
 
 const handleAddSubtask = (title) => {
-  emit('add-subtask', title)
-}
-
+  emit("add-subtask", title);
+};
 </script>

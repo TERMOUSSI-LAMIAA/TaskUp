@@ -59,7 +59,7 @@ import SubtaskItem from './SubtaskItem.vue'
 const props = defineProps({
   subtasks: {
     type: Array,
-    required: true
+    default: () => []
   }
 })
 
