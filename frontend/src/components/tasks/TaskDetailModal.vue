@@ -97,7 +97,16 @@ const isEditing = ref(false);
 const editedTask = reactive({});
 
 const enableEditMode = () => {
-  Object.assign(editedTask, props.task);
+  Object.assign(editedTask, {
+    id: props.task.id,
+    title: props.task.title,
+    description: props.task.description,
+    priority: props.task.priority,
+    status: props.task.status,
+    startDate: props.task.startDatetime ? props.task.startDatetime.slice(0, 16) : "",
+    endDate: props.task.endDatetime ? props.task.endDatetime.slice(0, 16) : "",
+  });
+
   isEditing.value = true;
 };
 

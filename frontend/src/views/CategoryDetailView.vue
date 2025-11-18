@@ -46,14 +46,14 @@
 </template>
 
 <script setup>
-import { ref ,onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import AppSidebar from "@/components/layout/AppSidebar.vue";
 import TaskList from "@/components/tasks/TaskList.vue";
 import TaskForm from "@/components/tasks/TaskForm.vue";
 import TaskDetailModal from "@/components/tasks/TaskDetailModal.vue";
 import { getCategoryById } from "@/services/categoryService.js";
-import { createTask } from "@/services/taskService.js";  
+import { createTask, updateTask } from "@/services/taskService.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -72,40 +72,49 @@ const loadCategoryWithTasks = async () => {
   try {
     const response = await getCategoryById(categoryId);
     category.value = response.data;
-    tasks.value = response.data.tasks || []; 
+    tasks.value = response.data.tasks || [];
   } catch (error) {
-    console.error('Failed to load category with tasks:', error);
-  } 
-};
-
-const handleAddTask =async  (formData) => {
-try {
-    const taskData = {
-      ...formData
-    };
-
-     await createTask(categoryId,taskData);
-     await loadCategoryWithTasks();
-    showAddTaskForm.value = false;
-  } catch (error) {
-    console.error('Failed to create task:', error);
+    console.error("Failed to load category with tasks:", error);
   }
 };
 
-const handleViewTask = (task) => { 
-  selectedTask.value = task; 
+const handleAddTask = async (formData) => {
+  try {
+    const taskData = {
+      ...formData,
+    };
+
+    await createTask(categoryId, taskData);
+    await loadCategoryWithTasks();
+    showAddTaskForm.value = false;
+  } catch (error) {
+    console.error("Failed to create task:", error);
+  }
+};
+
+const handleViewTask = (task) => {
+  selectedTask.value = task;
 };
 
 const handleDeleteTask = (taskId) => {
   tasks.value = tasks.value.filter((t) => t.id !== taskId);
 };
 
-const handleSaveTask = (updatedTask) => {
-  const index = tasks.value.findIndex(t => t.id === updatedTask.id);
-  if (index !== -1) {
-    tasks.value[index] = updatedTask;
-  }
-  selectedTask.value = null; 
-};
+const handleSaveTask = async (updatedTask) => {
+  try {
+    const { categoryId, startDate, endDate, ...updateData } = updatedTask;
+    if (startDate) {
+      updateData.startDatetime = new Date(startDate).toISOString();
+    }
+    if (endDate) {
+      updateData.endDatetime = new Date(endDate).toISOString();
+    }
 
+    await updateTask(updatedTask.id, updateData);
+    await loadCategoryWithTasks();
+    selectedTask.value = null;
+  } catch (error) {
+     console.error("Failed to update task:", error);
+  }
+};
 </script>

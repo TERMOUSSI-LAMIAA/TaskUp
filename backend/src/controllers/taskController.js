@@ -28,7 +28,9 @@ export const editTask = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.userId;
+     console.log('Received update data:', req.body);
     const updatedTask = await updateTask(userId, parseInt(id), req.body);
+       console.log('Updated task:', updatedTask);
     res.status(200).json({ message: "Task updated successfully", task: updatedTask });
   } catch (err) {
     res.status(400).json({ message: err.message });

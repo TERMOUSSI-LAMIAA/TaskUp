@@ -31,7 +31,7 @@ export const createTaskValidation = [
     
   body('status')
     .optional()
-    .isIn(['TODO', 'IN_PROGRESS', 'DONE'])
+    .isIn(['TODO', 'IN_PROGRESS', 'COMPLETED'])
     .withMessage('Invalid status value'),
 ];
 
@@ -65,6 +65,6 @@ export const updateTaskValidation = [
 
   body('status')
     .optional()
-    .isIn(['TODO', 'IN_PROGRESS', 'DONE'])
+    .isIn(['TODO', 'IN_PROGRESS', 'COMPLETED'])
     .withMessage('Invalid status value'),
 ];
