@@ -78,7 +78,7 @@ const progressPercentage = computed(() => {
 
 const handleAddSubtask = () => {
   if (newSubtaskTitle.value.trim()) {
-    emit('add-subtask', newSubtaskTitle.value)
+    emit('add-subtask', newSubtaskTitle.value.trim())
     newSubtaskTitle.value = ''
   }
 }

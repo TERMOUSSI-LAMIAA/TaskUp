@@ -156,7 +156,14 @@ const getStatusClass = (status) => {
   };
 };
 
-const handleAddSubtask = (title) => {
-  emit("add-subtask", title);
+const handleAddSubtask = async (title) => {
+  try {
+    emit("add-subtask", {
+      taskId: props.task.id,
+      title: title,
+    });
+  } catch (error) {
+    console.error("Failed to add subtask:", error);
+  }
 };
 </script>

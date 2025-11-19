@@ -41,7 +41,7 @@
     </div>
 
     <!-- Task Detail Modal -->
-    <TaskDetailModal v-if="selectedTask" :task="selectedTask" @close="selectedTask = null" @save="handleSaveTask" />
+    <TaskDetailModal v-if="selectedTask" :task="selectedTask" @close="selectedTask = null" @save="handleSaveTask"  @add-subtask="handleAddSubtask" />
  
     <!-- Delete Task Confirmation Modal -->
     <div v-if="deletingTask" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -69,6 +69,7 @@ import TaskForm from "@/components/tasks/TaskForm.vue";
 import TaskDetailModal from "@/components/tasks/TaskDetailModal.vue";
 import { getCategoryById } from "@/services/categoryService.js";
 import { createTask, updateTask, deleteTask } from "@/services/taskService.js";
+import { createSubtask} from "@/services/subtaskService.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -143,6 +144,21 @@ const handleSaveTask = async (updatedTask) => {
     selectedTask.value = null;
   } catch (error) {
     console.error("Failed to update task:", error);
+  }
+};
+
+const handleAddSubtask = async ({ taskId, title }) => {
+  try {
+    await createSubtask(taskId, title);
+    await loadCategoryWithTasks();
+       const updatedTask = tasks.value.find(t => t.id === taskId);
+    
+    if (updatedTask && selectedTask.value) {
+      selectedTask.value = { ...updatedTask }; 
+    }
+    
+  } catch (error) {
+    console.error('Failed to add subtask:', error);
   }
 };
 </script>
