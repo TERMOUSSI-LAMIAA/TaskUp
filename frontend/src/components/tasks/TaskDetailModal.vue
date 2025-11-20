@@ -62,7 +62,7 @@
         </div>
 
         <!-- Subtasks -->
-        <SubtaskList :subtasks="task.subtasks" @add-subtask="handleAddSubtask" />
+        <SubtaskList :subtasks="task.subtasks" @add-subtask="handleAddSubtask" @delete-subtask="handleDeleteSubtask" />
       </div>
 
       <!-- Footer -->
@@ -166,4 +166,8 @@ const handleAddSubtask = async (title) => {
     console.error("Failed to add subtask:", error);
   }
 };
+
+const handleDeleteSubtask = (subtaskId) => {
+  emit("delete-subtask", subtaskId);
+}
 </script>

@@ -41,7 +41,7 @@
     </div>
 
     <!-- Task Detail Modal -->
-    <TaskDetailModal v-if="selectedTask" :task="selectedTask" @close="selectedTask = null" @save="handleSaveTask"  @add-subtask="handleAddSubtask" />
+    <TaskDetailModal v-if="selectedTask" :task="selectedTask" @close="selectedTask = null" @save="handleSaveTask"  @add-subtask="handleAddSubtask" @delete-subtask="handleDeleteSubtask"  />
  
     <!-- Delete Task Confirmation Modal -->
     <div v-if="deletingTask" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -69,7 +69,7 @@ import TaskForm from "@/components/tasks/TaskForm.vue";
 import TaskDetailModal from "@/components/tasks/TaskDetailModal.vue";
 import { getCategoryById } from "@/services/categoryService.js";
 import { createTask, updateTask, deleteTask } from "@/services/taskService.js";
-import { createSubtask} from "@/services/subtaskService.js";
+import { createSubtask, deleteSubtask} from "@/services/subtaskService.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -159,6 +159,26 @@ const handleAddSubtask = async ({ taskId, title }) => {
     
   } catch (error) {
     console.error('Failed to add subtask:', error);
+  }
+};
+
+const handleDeleteSubtask = async (subtaskId) => {
+  try {
+    const taskWithSubtask = tasks.value.find(task => 
+      task.subtasks?.some(subtask => subtask.id === subtaskId)
+    );
+    
+    if (taskWithSubtask) {
+      await deleteSubtask(subtaskId);
+      await loadCategoryWithTasks();
+      
+      const updatedTask = tasks.value.find(t => t.id === taskWithSubtask.id);
+      if (updatedTask && selectedTask.value?.id === taskWithSubtask.id) {
+        selectedTask.value = { ...updatedTask };
+      }
+    }
+  } catch (error) {
+    console.error('Failed to delete subtask:', error);
   }
 };
 </script>

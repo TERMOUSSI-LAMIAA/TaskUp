@@ -29,7 +29,7 @@
         :key="subtask.id"
         :subtask="subtask"
         @toggle="$emit('toggle-subtask', subtask.id)"
-        @delete="$emit('delete-subtask', subtask.id)"
+        @delete="handleDeleteSubtask(subtask.id)"
       />
     </div>
 
@@ -81,5 +81,9 @@ const handleAddSubtask = () => {
     emit('add-subtask', newSubtaskTitle.value.trim())
     newSubtaskTitle.value = ''
   }
+}
+
+const handleDeleteSubtask = (subtaskId) => {
+  emit('delete-subtask', subtaskId)
 }
 </script>   

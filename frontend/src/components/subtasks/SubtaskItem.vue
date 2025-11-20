@@ -17,7 +17,7 @@
     </span>
     <button 
       class="text-gray-400 hover:text-red-500 text-xl transition-colors w-6 h-6 flex items-center justify-center"
-      @click="$emit('delete')"
+      @click="handleDelete"
     >
       ×
     </button>
@@ -25,12 +25,17 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   subtask: {
     type: Object,
     required: true
   }
 })
 
-defineEmits(['toggle', 'delete'])
+const emit = defineEmits(['toggle', 'delete'])
+
+const handleDelete = () => {
+  emit('delete');
+}
+
 </script>
