@@ -16,21 +16,70 @@
             </div>
             <div class="flex items-center gap-4">
               <!-- Search Bar -->
-              <div class="relative">
+              <div class="relative group">
                 <div class="relative flex items-center">
-                  <svg class="absolute left-3 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="absolute left-3 w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
                   <input
                     v-model="searchQuery"
                     type="text"
                     placeholder="Search tasks..."
-                    class="pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-64 transition-all" />
-                  <button v-if="searchQuery" @click="clearSearch" class="absolute right-3 text-gray-400 hover:text-gray-600 transition-colors">
+                    class="pl-10 pr-10 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-64 transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg bg-white" />
+                  <button v-if="searchQuery" @click="clearSearch" class="absolute right-3 text-gray-400 hover:text-gray-600 transition-colors duration-200 hover:scale-110">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                   </button>
+                </div>
+              </div>
+
+              <!-- Priority Filter -->
+              <div class="relative group">
+                <select
+                  v-model="priorityFilter"
+                  class="pl-10 pr-8 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 appearance-none bg-white cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg w-48">
+                  <option value="ALL">All Priorities</option>
+                  <option value="HIGH">🆘 High Priority</option>
+                  <option value="MEDIUM">🔥 Medium Priority</option>
+                  <option value="LOW">❗ Low Priority</option>
+                  <option value="NONE">⚪ No Priority</option>
+                </select>
+                <svg
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-purple-500 transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Status Filter -->
+              <div class="relative group">
+                <select
+                  v-model="statusFilter"
+                  class="pl-10 pr-8 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg w-44">
+                  <option value="ALL">All Status</option>
+                  <option value="TODO">📝 To Do</option>
+                  <option value="IN_PROGRESS">🔄 In Progress</option>
+                  <option value="COMPLETED">✅ Completed</option>
+                </select>
+                <svg
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
                 </div>
               </div>
 
@@ -44,10 +93,36 @@
               </button>
             </div>
           </div>
-          <!-- Search Results Info -->
-          <div v-if="searchQuery" class="mt-4 flex items-center gap-2 text-sm text-gray-600">
-            <span>Found {{ filteredTasks.length }} task(s)</span>
-            <button @click="clearSearch" class="text-emerald-600 hover:text-emerald-700 font-medium">Clear search</button>
+
+          <!-- Search & Filter Results Info -->
+          <div v-if="hasActiveFilters" class="mt-4 flex items-center gap-4 text-sm">
+            <span class="text-gray-700 font-medium">{{ filteredTasks.length }} task(s) found</span>
+            <div class="flex items-center gap-2">
+              <span v-if="searchQuery" class="bg-blue-100 text-blue-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                "{{ searchQuery }}"
+              </span>
+              <span v-if="priorityFilter !== 'ALL'" class="bg-purple-100 text-purple-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                {{ formatPriority(priorityFilter) }}
+              </span>
+              <span v-if="statusFilter !== 'ALL'" class="bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ formatStatus(statusFilter) }}
+              </span>
+            </div>
+            <button @click="clearAllFilters" class="text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Clear all
+            </button>
           </div>
         </div>
       </div>
@@ -94,7 +169,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted,computed  } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import AppSidebar from "@/components/layout/AppSidebar.vue";
 import TaskList from "@/components/tasks/TaskList.vue";
@@ -110,7 +185,9 @@ const tasks = ref([]);
 const showAddTaskForm = ref(false);
 const selectedTask = ref(null);
 const deletingTask = ref(null);
-const searchQuery = ref(""); 
+const searchQuery = ref("");
+const priorityFilter = ref("ALL");
+const statusFilter = ref("ALL");
 
 const categoryId = route.params.id;
 
@@ -119,15 +196,30 @@ onMounted(() => {
 });
 
 const filteredTasks = computed(() => {
-  if (!searchQuery.value.trim()) {
-    return tasks.value;
+  let filtered = tasks.value;
+
+  console.log("Original tasks:", tasks.value.length);
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase().trim();
+    filtered = filtered.filter((task) => task.title.toLowerCase().includes(query) || (task.description && task.description.toLowerCase().includes(query)));
+    console.log("After search:", filtered.length);
   }
-  
-  const query = searchQuery.value.toLowerCase().trim();
-  return tasks.value.filter(task => 
-    task.title.toLowerCase().includes(query) ||
-    (task.description && task.description.toLowerCase().includes(query))
-  );
+
+  if (priorityFilter.value !== "ALL") {
+    filtered = filtered.filter((task) => task.priority === priorityFilter.value);
+    console.log("After priority filter:", filtered.length);
+  }
+
+  if (statusFilter.value !== "ALL") {
+    filtered = filtered.filter((task) => task.status === statusFilter.value);
+    console.log("After status filter:", filtered.length);
+  }
+  console.log("Final filtered tasks:", filtered.length);
+  return filtered;
+});
+
+const hasActiveFilters = computed(() => {
+  return searchQuery.value.trim() || priorityFilter.value !== "ALL" || statusFilter.value !== "ALL";
 });
 
 const loadCategoryWithTasks = async () => {
@@ -246,8 +338,34 @@ const handleToggleSubtask = async (subtaskId) => {
   }
 };
 
+const formatPriority = (priority) => {
+  const priorities = {
+    ALL: "All",
+    NONE: "None",
+    LOW: "Low",
+    MEDIUM: "Medium",
+    HIGH: "High",
+  };
+  return priorities[priority] || priority;
+};
+
+const formatStatus = (status) => {
+  const statuses = {
+    ALL: "All",
+    TODO: "To Do",
+    IN_PROGRESS: "In Progress",
+    COMPLETED: "Completed",
+  };
+  return statuses[status] || status;
+};
+
 const clearSearch = () => {
   searchQuery.value = "";
 };
 
+const clearAllFilters = () => {
+  searchQuery.value = "";
+  priorityFilter.value = "ALL";
+  statusFilter.value = "ALL";
+};
 </script>
