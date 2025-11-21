@@ -62,7 +62,7 @@
         </div>
 
         <!-- Subtasks -->
-        <SubtaskList :subtasks="task.subtasks" @add-subtask="handleAddSubtask" @delete-subtask="handleDeleteSubtask" />
+        <SubtaskList :subtasks="task.subtasks" @add-subtask="handleAddSubtask" @delete-subtask="handleDeleteSubtask" @toggle-subtask="handleToggleSubtask"/>
       </div>
 
       <!-- Footer -->
@@ -169,5 +169,9 @@ const handleAddSubtask = async (title) => {
 
 const handleDeleteSubtask = (subtaskId) => {
   emit("delete-subtask", subtaskId);
+}
+
+const handleToggleSubtask = (subtaskId) => {
+  emit("toggle-subtask", subtaskId);
 }
 </script>

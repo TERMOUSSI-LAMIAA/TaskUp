@@ -6,7 +6,7 @@
     <input 
       type="checkbox" 
       :checked="subtask.isCompleted"
-      @change="$emit('toggle')"
+      @change="handleToggle"
       class="w-4.5 h-4.5 cursor-pointer text-emerald-500 rounded border-gray-300 focus:ring-emerald-500 focus:ring-2"
     />
     <span 
@@ -38,4 +38,7 @@ const handleDelete = () => {
   emit('delete');
 }
 
+const handleToggle = () => {
+  emit('toggle'); 
+}
 </script>

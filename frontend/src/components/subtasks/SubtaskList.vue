@@ -28,7 +28,7 @@
         v-for="subtask in subtasks"
         :key="subtask.id"
         :subtask="subtask"
-        @toggle="$emit('toggle-subtask', subtask.id)"
+        @toggle="handleToggleSubtask(subtask.id)"
         @delete="handleDeleteSubtask(subtask.id)"
       />
     </div>
@@ -81,6 +81,10 @@ const handleAddSubtask = () => {
     emit('add-subtask', newSubtaskTitle.value.trim())
     newSubtaskTitle.value = ''
   }
+}
+
+const handleToggleSubtask = (subtaskId) => {
+  emit('toggle-subtask', subtaskId)
 }
 
 const handleDeleteSubtask = (subtaskId) => {

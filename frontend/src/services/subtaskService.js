@@ -7,3 +7,7 @@ export function createSubtask(taskId, title) {
 export function deleteSubtask(subtaskId) {
   return api.delete(`api/subtasks/${subtaskId}`);
 }
+
+export function updateSubtask(subtaskId, updates) {
+  return api.put(`api/subtasks/${subtaskId}`, updates);
+}
