@@ -14,21 +14,47 @@
               <h1 class="text-3xl font-bold text-gray-900">{{ category?.name }}</h1>
               <p class="text-gray-600 mt-1">Manage tasks in this category</p>
             </div>
-            <button
-              @click="showAddTaskForm = true"
-              class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center gap-2">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-              </svg>
-              New task
-            </button>
+            <div class="flex items-center gap-4">
+              <!-- Search Bar -->
+              <div class="relative">
+                <div class="relative flex items-center">
+                  <svg class="absolute left-3 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                  <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Search tasks..."
+                    class="pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-64 transition-all" />
+                  <button v-if="searchQuery" @click="clearSearch" class="absolute right-3 text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <button
+                @click="showAddTaskForm = true"
+                class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                New task
+              </button>
+            </div>
+          </div>
+          <!-- Search Results Info -->
+          <div v-if="searchQuery" class="mt-4 flex items-center gap-2 text-sm text-gray-600">
+            <span>Found {{ filteredTasks.length }} task(s)</span>
+            <button @click="clearSearch" class="text-emerald-600 hover:text-emerald-700 font-medium">Clear search</button>
           </div>
         </div>
       </div>
 
       <!-- Tasks Content -->
       <div class="p-8">
-        <TaskList :tasks="tasks" @view-task="handleViewTask" @delete-task="handleDeleteTask" />
+        <TaskList :tasks="filteredTasks" @view-task="handleViewTask" @delete-task="handleDeleteTask" />
       </div>
     </div>
 
@@ -41,8 +67,15 @@
     </div>
 
     <!-- Task Detail Modal -->
-    <TaskDetailModal v-if="selectedTask" :task="selectedTask" @close="selectedTask = null" @save="handleSaveTask"  @add-subtask="handleAddSubtask" @delete-subtask="handleDeleteSubtask"  @toggle-subtask="handleToggleSubtask"  />
- 
+    <TaskDetailModal
+      v-if="selectedTask"
+      :task="selectedTask"
+      @close="selectedTask = null"
+      @save="handleSaveTask"
+      @add-subtask="handleAddSubtask"
+      @delete-subtask="handleDeleteSubtask"
+      @toggle-subtask="handleToggleSubtask" />
+
     <!-- Delete Task Confirmation Modal -->
     <div v-if="deletingTask" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
@@ -61,28 +94,40 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { ref, onMounted,computed  } from "vue";
+import { useRoute } from "vue-router";
 import AppSidebar from "@/components/layout/AppSidebar.vue";
 import TaskList from "@/components/tasks/TaskList.vue";
 import TaskForm from "@/components/tasks/TaskForm.vue";
 import TaskDetailModal from "@/components/tasks/TaskDetailModal.vue";
 import { getCategoryById } from "@/services/categoryService.js";
 import { createTask, updateTask, deleteTask } from "@/services/taskService.js";
-import { createSubtask, deleteSubtask,updateSubtask } from "@/services/subtaskService.js";
+import { createSubtask, deleteSubtask, updateSubtask } from "@/services/subtaskService.js";
 
-const router = useRouter();
 const route = useRoute();
 const category = ref(null);
 const tasks = ref([]);
 const showAddTaskForm = ref(false);
 const selectedTask = ref(null);
-const deletingTask = ref(null); 
+const deletingTask = ref(null);
+const searchQuery = ref(""); 
 
 const categoryId = route.params.id;
 
 onMounted(() => {
   loadCategoryWithTasks();
+});
+
+const filteredTasks = computed(() => {
+  if (!searchQuery.value.trim()) {
+    return tasks.value;
+  }
+  
+  const query = searchQuery.value.toLowerCase().trim();
+  return tasks.value.filter(task => 
+    task.title.toLowerCase().includes(query) ||
+    (task.description && task.description.toLowerCase().includes(query))
+  );
 });
 
 const loadCategoryWithTasks = async () => {
@@ -114,17 +159,17 @@ const handleViewTask = (task) => {
 };
 
 const handleDeleteTask = async (taskId) => {
-   deletingTask.value = taskId;
+  deletingTask.value = taskId;
 };
 
 const confirmTaskDelete = async () => {
   if (deletingTask.value) {
     try {
       await deleteTask(deletingTask.value);
-      await loadCategoryWithTasks(); 
-      deletingTask.value = null; 
+      await loadCategoryWithTasks();
+      deletingTask.value = null;
     } catch (error) {
-      console.error('Failed to delete task:', error);
+      console.error("Failed to delete task:", error);
     }
   }
 };
@@ -151,58 +196,58 @@ const handleAddSubtask = async ({ taskId, title }) => {
   try {
     await createSubtask(taskId, title);
     await loadCategoryWithTasks();
-       const updatedTask = tasks.value.find(t => t.id === taskId);
-    
+    const updatedTask = tasks.value.find((t) => t.id === taskId);
+
     if (updatedTask && selectedTask.value) {
-      selectedTask.value = { ...updatedTask }; 
+      selectedTask.value = { ...updatedTask };
     }
-    
   } catch (error) {
-    console.error('Failed to add subtask:', error);
+    console.error("Failed to add subtask:", error);
   }
 };
 
 const handleDeleteSubtask = async (subtaskId) => {
   try {
-    const taskWithSubtask = tasks.value.find(task => 
-      task.subtasks?.some(subtask => subtask.id === subtaskId)
-    );
-    
+    const taskWithSubtask = tasks.value.find((task) => task.subtasks?.some((subtask) => subtask.id === subtaskId));
+
     if (taskWithSubtask) {
       await deleteSubtask(subtaskId);
       await loadCategoryWithTasks();
-      
-      const updatedTask = tasks.value.find(t => t.id === taskWithSubtask.id);
+
+      const updatedTask = tasks.value.find((t) => t.id === taskWithSubtask.id);
       if (updatedTask && selectedTask.value?.id === taskWithSubtask.id) {
         selectedTask.value = { ...updatedTask };
       }
     }
   } catch (error) {
-    console.error('Failed to delete subtask:', error);
+    console.error("Failed to delete subtask:", error);
   }
 };
 
 const handleToggleSubtask = async (subtaskId) => {
   try {
-    const allSubtasks = tasks.value.flatMap(task => task.subtasks || []);
-    const subtask = allSubtasks.find(s => s.id === subtaskId);
-    
+    const allSubtasks = tasks.value.flatMap((task) => task.subtasks || []);
+    const subtask = allSubtasks.find((s) => s.id === subtaskId);
+
     if (subtask) {
       await updateSubtask(subtaskId, { isCompleted: !subtask.isCompleted });
       await loadCategoryWithTasks();
-      
-      const taskWithSubtask = tasks.value.find(task => 
-        task.subtasks?.some(s => s.id === subtaskId)
-      );
+
+      const taskWithSubtask = tasks.value.find((task) => task.subtasks?.some((s) => s.id === subtaskId));
       if (taskWithSubtask && selectedTask.value?.id === taskWithSubtask.id) {
-        const updatedTask = tasks.value.find(t => t.id === taskWithSubtask.id);
+        const updatedTask = tasks.value.find((t) => t.id === taskWithSubtask.id);
         if (updatedTask) {
           selectedTask.value = { ...updatedTask };
         }
       }
     }
   } catch (error) {
-    console.error('Failed to toggle subtask:', error);
+    console.error("Failed to toggle subtask:", error);
   }
 };
+
+const clearSearch = () => {
+  searchQuery.value = "";
+};
+
 </script>
