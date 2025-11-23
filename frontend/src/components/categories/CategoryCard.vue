@@ -73,10 +73,6 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  tasks: {
-    type: Array,
-    default: () => [],
-  },
 });
 
 defineEmits(["view", "edit", "delete"]);
@@ -86,11 +82,11 @@ const categoryImage = computed(() => {
 });
 
 const taskCount = computed(() => {
-  return props.tasks.filter((task) => task.categoryId === props.category.id).length;
+  return props.category.tasks?.length || 0;
 });
 
 const completedCount = computed(() => {
-  return props.tasks.filter((task) => task.categoryId === props.category.id && task.status === "COMPLETED").length;
+  return props.category.tasks?.filter(task => task.status === "COMPLETED").length || 0;
 });
 
 const progressPercentage = computed(() => {

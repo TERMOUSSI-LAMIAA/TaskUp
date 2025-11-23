@@ -16,7 +16,6 @@
         v-for="task in tasks"
         :key="task.id"
         :task="task"
-        @toggle-status="handleToggleStatus(task.id)"
         @view="$emit('view-task', task)"
         @delete="$emit('delete-task', task.id)" />
     </div>
@@ -34,9 +33,6 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["view-task", "delete-task", "toggle-status"]);
+const emit = defineEmits(["view-task", "delete-task"]);
 
-const handleToggleStatus = (taskId) => {
-  emit("toggle-status", taskId);
-};
 </script>

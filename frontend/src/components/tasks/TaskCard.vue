@@ -10,12 +10,6 @@
     <!-- Header -->
     <div class="flex justify-between items-start mb-3">
       <div class="flex items-center gap-3 flex-1">
-        <input 
-          type="checkbox" 
-          :checked="task.status === 'COMPLETED'"
-          @change="$emit('toggle-status')"
-          class="w-5 h-5 cursor-pointer accent-emerald-500"
-        />
         <h4 
           class="text-sm font-semibold text-gray-900"
           :class="{ 'line-through text-gray-500': task.status === 'COMPLETED' }"
@@ -93,7 +87,7 @@ defineProps({
   }
 })
 
-defineEmits(['toggle-status', 'view', 'edit', 'delete'])
+defineEmits(['view', 'edit', 'delete'])
 
 const formatStatus = (status) => {
   const statuses = {
