@@ -15,7 +15,19 @@
       <ul class="space-y-2">
         <li>
           <router-link
-            to="/categories"
+            to="/dashboard"
+            class="flex items-center px-4 py-3 rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200"
+            :class="{ 'bg-emerald-50 text-emerald-600': $route.path === '/dashboard' }">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3v8H3m8 0h8m-8 0v8m0-8h8" />
+            </svg>
+            Dashboard
+          </router-link>
+        </li>
+
+        <li>
+          <router-link
+            to="/"
             class="flex items-center px-4 py-3 rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200"
             :class="{ 'bg-emerald-50 text-emerald-600': $route.path === '/categories' }">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +112,7 @@ onMounted(() => {
     const userData = JSON.parse(user);
     userName.value = userData.username || "User";
     userEmail.value = userData.email || "user@email.com";
-     if (userData.photo) {
+    if (userData.photo) {
       userPhoto.value = `http://localhost:3000/uploads/profiles/${userData.photo}`;
     } else {
       userPhoto.value = "";

@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import taskRoutes from './routes/taskRoutes.js'
 import subtaskRoutes from './routes/subtaskRoutes.js'
+import statsRoutes from './routes/statsRoutes.js';
 
 const app = express();
 
@@ -21,5 +22,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/subtasks', subtaskRoutes);
+app.use('/api/stats', statsRoutes);
 
 export default app;
