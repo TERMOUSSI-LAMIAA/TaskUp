@@ -29,7 +29,7 @@
           <router-link
             to="/"
             class="flex items-center px-4 py-3 rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200"
-            :class="{ 'bg-emerald-50 text-emerald-600': $route.path === '/categories' }">
+            :class="{ 'bg-emerald-50 text-emerald-600': $route.path === '/' }">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
@@ -42,17 +42,13 @@
         </li>
         <li>
           <router-link
-            to="/tasks"
+            to="/profile"
             class="flex items-center px-4 py-3 rounded-lg text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200"
-            :class="{ 'bg-emerald-50 text-emerald-600': $route.path === '/tasks' }">
+            :class="{ 'bg-emerald-50 text-emerald-600': $route.path === '/profile' }">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.507 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
-            Tasks
+            Manage Profile
           </router-link>
         </li>
       </ul>
@@ -90,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted,onUnmounted  } from "vue";
 import LogoutButton from "@/components/auth/LogoutButton.vue";
 
 const userName = ref("User");
@@ -106,17 +102,28 @@ const getUserInitials = (name) => {
     .slice(0, 2);
 };
 
-onMounted(() => {
-  const user = localStorage.getItem("user");
-  if (user) {
-    const userData = JSON.parse(user);
-    userName.value = userData.username || "User";
-    userEmail.value = userData.email || "user@email.com";
-    if (userData.photo) {
-      userPhoto.value = `http://localhost:3000/uploads/profiles/${userData.photo}`;
-    } else {
-      userPhoto.value = "";
+const loadUserFromStorage = () => {
+  try {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const user = JSON.parse(userData);
+      userName.value = user.username || "User";
+      userEmail.value = user.email || "user@email.com";
+      userPhoto.value = user.photo 
+        ? `http://localhost:3000/uploads/profiles/${user.photo}`
+        : "";
     }
+  } catch (error) {
+    console.error("Error loading user data:", error);
   }
+};
+
+onMounted(() => {
+ loadUserFromStorage();
+ window.addEventListener('userUpdated', loadUserFromStorage);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('userUpdated', loadUserFromStorage);
 });
 </script>

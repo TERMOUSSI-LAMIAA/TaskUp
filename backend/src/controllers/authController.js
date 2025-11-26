@@ -17,9 +17,11 @@ export const signup = async (req, res) => {
         email: result.email,
         username: result.username,
         photo: result.photo,
+        createdAt: result.createdAt,
+        updatedAt: result.updatedAt,
       },
       token: result.token,
-    });                         
+    });
   } catch (err) {
     res.status(400).json({
       message: err.message,
@@ -40,6 +42,8 @@ export const login = async (req, res) => {
         email: result.email,
         username: result.username,
         photo: result.photo,
+        createdAt: result.createdAt,
+        updatedAt: result.updatedAt,
       },
       token: result.token,
     });
