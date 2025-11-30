@@ -26,8 +26,8 @@ export const signupUser = async (userData) => {
     email: newUser.email,
     username: newUser.username,
     photo: newUser.photo,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
+    createdAt: newUser.createdAt,
+    updatedAt: newUser.updatedAt,
     token,
   };
 };

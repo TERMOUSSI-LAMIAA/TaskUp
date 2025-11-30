@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
     <!-- Background -->
-    <div class="absolute inset-0 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 animate-gradient-x"></div>
+    <div class="fixed  inset-0 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 animate-gradient-x"></div>
 
     <!-- Content -->
     <div class="relative w-full max-w-md">

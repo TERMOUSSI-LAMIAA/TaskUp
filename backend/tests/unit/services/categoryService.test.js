@@ -1,12 +1,6 @@
 import prisma from "../../../src/config/database.js";
 
-import {
-  createCategory,
-  getAllCategories,
-  getCategoryById,
-  updateCategory,
-  deleteCategory,
-} from "../../../src/services/categoryService.js";
+import { createCategory, getAllCategories, getCategoryById, updateCategory, deleteCategory } from "../../../src/services/categoryService.js";
 
 jest.mock("../../../src/config/database.js", () => ({
   category: {
@@ -52,14 +46,30 @@ describe("Category Service", () => {
   });
 
   test("should return category by id", async () => {
-    const mockCategory = { id: 2, name: "Personal" };
+    const mockCategory = {
+      id: 2,
+      name: "Personal",
+      tasks: [
+        {
+          id: 1,
+          title: "Test Task",
+          subtasks: [{ id: 1, title: "Subtask 1" }],
+        },
+      ],
+    };
     prisma.category.findFirst.mockResolvedValue(mockCategory);
 
     const result = await getCategoryById(2, 1);
 
     expect(prisma.category.findFirst).toHaveBeenCalledWith({
       where: { id: 2, userId: 1 },
-      include: { tasks: true },
+      include: {
+        tasks: {
+          include: {
+            subtasks: true,
+          },
+        },
+      },
     });
     expect(result).toEqual(mockCategory);
   });
@@ -67,16 +77,12 @@ describe("Category Service", () => {
   test("should throw error if category not found in updateCategory", async () => {
     prisma.category.findUnique.mockResolvedValue(null);
 
-    await expect(
-      updateCategory(1, 99, { name: "Updated" })
-    ).rejects.toThrow("Category not found or access denied");
+    await expect(updateCategory(1, 99, { name: "Updated" })).rejects.toThrow("Category not found or access denied");
   });
 
   test("should throw error if category not found in deleteCategory", async () => {
     prisma.category.findUnique.mockResolvedValue(null);
 
-    await expect(deleteCategory(1, 99)).rejects.toThrow(
-      "Category not found or access denied"
-    );
+    await expect(deleteCategory(1, 99)).rejects.toThrow("Category not found or access denied");
   });
 });

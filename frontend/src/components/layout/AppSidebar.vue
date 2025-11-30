@@ -1,5 +1,25 @@
 <template>
-  <aside class="w-64 bg-white border-r border-gray-200 h-screen flex flex-col fixed left-0 top-0 shadow-sm">
+  <!-- Mobile Menu Button -->
+  <button
+    @click="toggleSidebar"
+    class="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-lg border border-gray-200"
+    :class="{ 'left-64': isSidebarOpen }"
+    style="transition: left 0.3s ease">
+    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path v-if="!isSidebarOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+  <!-- Overlay for mobile -->
+  <div v-if="isSidebarOpen" @click="closeSidebar" class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"></div>
+
+  <!-- Sidebar -->
+  <aside
+    class="w-64 bg-white border-r border-gray-200 h-screen flex flex-col fixed left-0 top-0 shadow-sm z-40 transform transition-transform duration-300 ease-in-out"
+    :class="{
+      '-translate-x-full lg:translate-x-0': !isSidebarOpen,
+      'translate-x-0': isSidebarOpen,
+    }">
     <!-- Logo Section -->
     <div class="p-6 border-b border-gray-200">
       <div class="flex items-center gap-3">
@@ -86,12 +106,49 @@
 </template>
 
 <script setup>
-import { ref, onMounted,onUnmounted  } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import LogoutButton from "@/components/auth/LogoutButton.vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const isSidebarOpen = ref(false);
 
 const userName = ref("User");
 const userEmail = ref("user@email.com");
 const userPhoto = ref("");
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+const closeSidebar = () => {
+  isSidebarOpen.value = false;
+};
+
+const closeSidebarOnMobile = () => {
+  if (window.innerWidth < 1024) {
+    closeSidebar();
+  }
+};
+
+watch(
+  () => route.path,
+  () => {
+    closeSidebarOnMobile();
+  }
+);
+
+const handleEscapeKey = (event) => {
+  if (event.key === "Escape" && isSidebarOpen.value) {
+    closeSidebar();
+  }
+};
+
+const handleResize = () => {
+  if (window.innerWidth >= 1024) {
+    isSidebarOpen.value = false;
+  }
+};
 
 const getUserInitials = (name) => {
   return name
@@ -109,9 +166,7 @@ const loadUserFromStorage = () => {
       const user = JSON.parse(userData);
       userName.value = user.username || "User";
       userEmail.value = user.email || "user@email.com";
-      userPhoto.value = user.photo 
-        ? `http://localhost:3000/uploads/profiles/${user.photo}`
-        : "";
+      userPhoto.value = user.photo ? `http://localhost:3000/uploads/profiles/${user.photo}` : "";
     }
   } catch (error) {
     console.error("Error loading user data:", error);
@@ -119,11 +174,38 @@ const loadUserFromStorage = () => {
 };
 
 onMounted(() => {
- loadUserFromStorage();
- window.addEventListener('userUpdated', loadUserFromStorage);
+  loadUserFromStorage();
+  window.addEventListener("userUpdated", loadUserFromStorage);
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("keydown", handleEscapeKey);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('userUpdated', loadUserFromStorage);
+  window.removeEventListener("userUpdated", loadUserFromStorage);
+  window.removeEventListener('resize', handleResize);
+  window.removeEventListener('keydown', handleEscapeKey);
 });
 </script>
+
+<style scoped>
+aside {
+  transition: transform 0.3s ease-in-out;
+}
+
+nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+nav::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+nav::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+nav::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+</style>

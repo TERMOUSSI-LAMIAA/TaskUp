@@ -4,29 +4,29 @@
     <AppSidebar />
 
     <!-- Main Content -->
-    <div class="flex-1 ml-64">
+    <div class="flex-1 lg:ml-64 transition-all duration-300">
       <!-- Header -->
-      <div class="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div class="px-8 py-6">
-          <router-link to="/" class="text-emerald-600 font-semibold hover:text-emerald-700 mb-4 inline-block">← Back to categories</router-link>
-          <div class="flex items-center justify-between">
-            <div>
-              <h1 class="text-3xl font-bold text-gray-900">{{ category?.name }}</h1>
-              <p class="text-gray-600 mt-1">Manage tasks in this category</p>
+      <div class="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <div class="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <router-link to="/" class="text-emerald-600 font-semibold hover:text-emerald-700 mb-4 inline-block text-sm sm:text-base">← Back to categories</router-link>
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 truncate">{{ category?.name }}</h1>
+              <p class="text-gray-600 mt-1 text-sm sm:text-base">Manage tasks in this category</p>
             </div>
-            <div class="flex items-center gap-4">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <!-- Search Bar -->
-              <div class="relative group">
+              <div class="relative group order-2 sm:order-1">
                 <div class="relative flex items-center">
-                  <svg class="absolute left-3 w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="absolute left-3 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
                   <input
                     v-model="searchQuery"
                     type="text"
                     placeholder="Search tasks..."
-                    class="pl-10 pr-10 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-64 transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg bg-white" />
-                  <button v-if="searchQuery" @click="clearSearch" class="absolute right-3 text-gray-400 hover:text-gray-600 transition-colors duration-200 hover:scale-110">
+                    class="pl-9 sm:pl-10 pr-8 sm:pr-10 py-2 sm:py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 w-full transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg bg-white text-sm sm:text-base" />
+                  <button v-if="searchQuery" @click="clearSearch" class="absolute right-2 sm:right-3 text-gray-400 hover:text-gray-600 transition-colors duration-200 hover:scale-110">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -34,58 +34,61 @@
                 </div>
               </div>
 
-              <!-- Priority Filter -->
-              <div class="relative group">
-                <select
-                  v-model="priorityFilter"
-                  class="pl-10 pr-8 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 appearance-none bg-white cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg w-48">
-                  <option value="ALL">All Priorities</option>
-                  <option value="HIGH">🆘 High Priority</option>
-                  <option value="MEDIUM">🔥 Medium Priority</option>
-                  <option value="LOW">❗ Low Priority</option>
-                  <option value="NONE">⚪ No Priority</option>
-                </select>
-                <svg
-                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-purple-500 transition-colors"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              <!-- Filters Row -->
+              <div class="flex flex-wrap gap-2 sm:gap-3 order-3 lg:order-2">
+                <!-- Priority Filter -->
+                <div class="relative group flex-1 min-w-[140px] sm:min-w-0 sm:w-32 lg:w-40">
+                  <select
+                    v-model="priorityFilter"
+                    class="pl-8 sm:pl-10 pr-6 sm:pr-8 py-2 sm:py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 appearance-none bg-white cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg w-full text-xs sm:text-sm">
+                    <option value="ALL">All Priorities</option>
+                    <option value="HIGH">🆘 High Priority</option>
+                    <option value="MEDIUM">🔥 Medium Priority</option>
+                    <option value="LOW">❗ Low Priority</option>
+                    <option value="NONE">⚪ No Priority</option>
+                  </select>
+                  <svg
+                    class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-purple-500 transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                   </svg>
+                  <div class="absolute inset-y-0 right-0 flex items-center px-1 sm:px-2 pointer-events-none">
+                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
                 </div>
-              </div>
 
-              <!-- Status Filter -->
-              <div class="relative group">
-                <select
-                  v-model="statusFilter"
-                  class="pl-10 pr-8 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg w-44">
-                  <option value="ALL">All Status</option>
-                  <option value="TODO">📝 To Do</option>
-                  <option value="IN_PROGRESS">🔄 In Progress</option>
-                  <option value="COMPLETED">✅ Completed</option>
-                </select>
-                <svg
-                  class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                <!-- Status Filter -->
+                <div class="relative group flex-1 min-w-[120px] sm:min-w-0 sm:w-28 lg:w-36">
+                  <select
+                    v-model="statusFilter"
+                    class="pl-8 sm:pl-10 pr-6 sm:pr-8 py-2 sm:py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg w-full text-xs sm:text-sm">
+                    <option value="ALL">All Status</option>
+                    <option value="TODO">📝 To Do</option>
+                    <option value="IN_PROGRESS">🔄 In Progress</option>
+                    <option value="COMPLETED">✅ Completed</option>
+                  </select>
+                  <svg
+                    class="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
+                  <div class="absolute inset-y-0 right-0 flex items-center px-1 sm:px-2 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
                 </div>
               </div>
 
               <button
                 @click="showAddTaskForm = true"
-                class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center gap-2">
+                class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center gap-2 justify-center order-1 sm:order-3 text-sm sm:text-base whitespace-nowrap">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -95,22 +98,22 @@
           </div>
 
           <!-- Search & Filter Results Info -->
-          <div v-if="hasActiveFilters" class="mt-4 flex items-center gap-4 text-sm">
+          <div v-if="hasActiveFilters" class="mt-4 flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
             <span class="text-gray-700 font-medium">{{ filteredTasks.length }} task(s) found</span>
             <div class="flex items-center gap-2">
-              <span v-if="searchQuery" class="bg-blue-100 text-blue-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+              <span v-if="searchQuery" class="bg-blue-100 text-blue-800 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 "{{ searchQuery }}"
               </span>
-              <span v-if="priorityFilter !== 'ALL'" class="bg-purple-100 text-purple-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+              <span v-if="priorityFilter !== 'ALL'" class="bg-purple-100 text-purple-800 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                 </svg>
                 {{ formatPriority(priorityFilter) }}
               </span>
-              <span v-if="statusFilter !== 'ALL'" class="bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
+              <span v-if="statusFilter !== 'ALL'" class="bg-green-100 text-green-800 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
@@ -128,15 +131,15 @@
       </div>
 
       <!-- Tasks Content -->
-      <div class="p-8">
+      <div class="p-4 sm:p-6 lg:p-8">
         <TaskList :tasks="filteredTasks" @view-task="handleViewTask" @delete-task="handleDeleteTask" />
       </div>
     </div>
 
     <!-- Add Task Modal -->
     <div v-if="showAddTaskForm" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">New task</h2>
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full  mx-4 p-6 sm:p-8">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6">New task</h2>
         <TaskForm @submit="handleAddTask" @cancel="showAddTaskForm = false" :category-id="categoryId" />
       </div>
     </div>
@@ -153,15 +156,15 @@
 
     <!-- Delete Task Confirmation Modal -->
     <div v-if="deletingTask" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">Delete Task</h2>
-        <p class="text-gray-600 mb-6">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Delete Task</h2>
+        <p class="text-gray-600 mb-6 text-sm sm:text-base">
           Are you sure you want to delete this task?
           <span class="font-semibold text-red-600 block mt-2">This action cannot be undone.</span>
         </p>
         <div class="flex gap-3">
-          <button @click="confirmTaskDelete" class="flex-1 bg-red-500 text-white font-semibold py-3 rounded-lg hover:bg-red-600 transition-colors">Delete</button>
-          <button @click="deletingTask = null" class="flex-1 bg-gray-200 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-300 transition-colors">Cancel</button>
+          <button @click="confirmTaskDelete" class="flex-1 bg-red-500 text-white font-semibold py-3 rounded-lg hover:bg-red-600 transition-colors  text-sm sm:text-base">Delete</button>
+          <button @click="deletingTask = null" class="flex-1 bg-gray-200 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-300 transition-colors text-sm sm:text-base">Cancel</button>
         </div>
       </div>
     </div>
