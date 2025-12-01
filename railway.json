@@ -1,8 +1,8 @@
 {
-  "root": "backend",
+  "root": ".",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "npm install",
-    "startCommand": "node src/server.js"
+    "buildCommand": "cd backend && npm install",
+    "startCommand": "cd backend && node src/server.js"
   }
 }
