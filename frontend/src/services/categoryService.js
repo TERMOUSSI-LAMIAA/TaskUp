@@ -18,4 +18,5 @@ export function updateCategory(id, category) {
 
 export function deleteCategory(id) {
   return api.delete(`api/categories/${id}`);
-}
+} 
+
