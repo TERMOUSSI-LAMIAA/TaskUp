@@ -24,7 +24,7 @@ Each user has a **personal secure space**, accessible only via authentication.
 - TailwindCSS  
 
 ### Backend
-- Node.js + Express.js  
+- Node.js + Express.js      
 - Prisma ORM  
 - PostgreSQL  
 - JWT (JSON Web Token)  
@@ -36,6 +36,7 @@ Each user has a **personal secure space**, accessible only via authentication.
 
 ## 📂 Project Structure
 
+```
 TaskUp/
 ├── backend/
 │ ├── src/
@@ -48,6 +49,7 @@ TaskUp/
 │ ├── package.json
 └── README.md
 
+```
 ---
 
 ## ⚙️ Installation & Configuration
@@ -120,6 +122,7 @@ npm run test
 ```
 ## 🧱 Backend Architecture (Express)
 
+```
 backend/src/
  ├── app.js
  ├── server.js
@@ -131,6 +134,7 @@ backend/src/
  ├── services/
  └── validators/
 
+```
 ## ✨ Author & Contact
 
 Name: Lamiaa Termoussi 
