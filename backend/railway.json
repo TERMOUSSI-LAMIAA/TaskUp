@@ -1,6 +1,6 @@
 {
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "chmod +x start.sh && ./start.sh"
+    "buildCommand": "/bin/bash start.sh"
   }
 }
