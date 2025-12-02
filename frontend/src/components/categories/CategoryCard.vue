@@ -78,7 +78,10 @@ const props = defineProps({
 defineEmits(["view", "edit", "delete"]);
 
 const categoryImage = computed(() => {
-  return props.category.image ? `http://localhost:3000/uploads/categories/${props.category.image}` : "";
+  // return props.category.image ? `http://localhost:3000/uploads/categories/${props.category.image}` : "";
+  return props.category.image
+    ? `${import.meta.env.VITE_API_URL}/uploads/categories/${props.category.image}`
+    : "";
 });
 
 const taskCount = computed(() => {

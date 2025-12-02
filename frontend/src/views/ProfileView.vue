@@ -173,7 +173,8 @@ const loadUserData = () => {
       user.value = {
         username: userObj.username || "",
         email: userObj.email || "",
-        photo: userObj.photo ? `http://localhost:3000/uploads/profiles/${userObj.photo}` : null,
+        // photo: userObj.photo ? `http://localhost:3000/uploads/profiles/${userObj.photo}` : null,
+        photo: userObj.photo ? `${import.meta.env.VITE_API_URL}/uploads/profiles/${userObj.photo}` : null,
         createdAt: userObj.createdAt || "",
         updatedAt: userObj.updatedAt || "",
       };

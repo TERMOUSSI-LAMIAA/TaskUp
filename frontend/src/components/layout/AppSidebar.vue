@@ -166,7 +166,8 @@ const loadUserFromStorage = () => {
       const user = JSON.parse(userData);
       userName.value = user.username || "User";
       userEmail.value = user.email || "user@email.com";
-      userPhoto.value = user.photo ? `http://localhost:3000/uploads/profiles/${user.photo}` : "";
+      // userPhoto.value = user.photo ? `http://localhost:3000/uploads/profiles/${user.photo}` : "";
+      userPhoto.value = user.photo ? `${import.meta.env.VITE_API_URL}/uploads/profiles/${user.photo}` : "";
     }
   } catch (error) {
     console.error("Error loading user data:", error);
@@ -182,8 +183,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("userUpdated", loadUserFromStorage);
-  window.removeEventListener('resize', handleResize);
-  window.removeEventListener('keydown', handleEscapeKey);
+  window.removeEventListener("resize", handleResize);
+  window.removeEventListener("keydown", handleEscapeKey);
 });
 </script>
 
