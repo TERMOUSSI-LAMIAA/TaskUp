@@ -231,8 +231,10 @@ const updateProfile = async () => {
     if (form.photo) {
       formData.append("photo", form.photo);
     }
-
-    const response = await fetch("http://localhost:3000/api/user/update", {
+    
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  
+    const response = await fetch(`${API_URL}/api/user/update`, {
       method: "PUT",
       body: formData,
       headers: {

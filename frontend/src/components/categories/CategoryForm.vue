@@ -25,7 +25,7 @@
       <!-- Current Image Preview (for edit mode) -->
       <div v-if="props.category?.image && !imagePreview" class="mt-3">
         <p class="text-sm text-gray-600 mb-2">Current Image:</p>
-        <img :src="`http://localhost:3000/uploads/categories/${props.category.image}`" :alt="props.category.name" class="w-32 h-32 object-cover rounded-lg border border-gray-200" />
+        <img :src="props.category.image ? `${import.meta.env.VITE_API_URL}/uploads/categories/${props.category.image}` : ''" :alt="props.category.name" class="w-32 h-32 object-cover rounded-lg border border-gray-200" />
         <p class="text-xs text-gray-500 mt-1">Select a new image to replace this one</p>
       </div>
 
