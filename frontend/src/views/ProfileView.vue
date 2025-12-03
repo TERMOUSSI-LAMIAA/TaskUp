@@ -135,6 +135,7 @@
 <script setup>
 import { ref, onMounted, reactive } from "vue";
 import AppSidebar from "@/components/layout/AppSidebar.vue";
+import { updateUserProfile } from '@/services/authService.js';
 
 const loading = ref(true);
 const saving = ref(false);
@@ -231,24 +232,10 @@ const updateProfile = async () => {
     if (form.photo) {
       formData.append("photo", form.photo);
     }
-    
-    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-  
-    const response = await fetch(`${API_URL}/api/user/update`, {
-      method: "PUT",
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
 
-    if (!response.ok) {
-      throw new Error("Failed to update profile");
-    }
+   const response = await updateUserProfile(formData);
+    const updatedUser = response.data.user;
 
-    const result = await response.json();
-
-    const updatedUser = result.user;
 
     const currentUser = JSON.parse(localStorage.getItem("user"));
     const updatedUserData = {

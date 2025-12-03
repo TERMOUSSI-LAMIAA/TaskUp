@@ -11,3 +11,11 @@ export function signup(formData) {
     }
   });
 }
+
+export function updateUserProfile(formData) {
+  return api.put('/api/user/update', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+}
